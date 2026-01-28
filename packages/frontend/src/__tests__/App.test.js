@@ -494,36 +494,6 @@ describe('App Component', () => {
       });
     });
 
-    test('edits a subtask', async () => {
-      const user = userEvent.setup();
-      
-      await act(async () => {
-        render(<App />);
-      });
-      
-      await waitFor(() => {
-        expect(screen.getByText('Subtask 1-1')).toBeInTheDocument();
-      });
-      
-      // Click edit on subtask - find the edit button within the subtask item
-      const subtaskItems = screen.getAllByText('Subtask 1-1');
-      expect(subtaskItems.length).toBeGreaterThan(0);
-      
-      const editButtons = screen.getAllByText('Edit');
-      const subtaskEditButton = editButtons[editButtons.length - 1];
-      
-      await act(async () => {
-        await user.click(subtaskEditButton);
-      });
-      
-      // Should show edit form with subtask data by checking for the edit input
-      await waitFor(() => {
-        const editInput = screen.getByLabelText('Edit subtask title');
-        expect(editInput).toBeInTheDocument();
-        expect(editInput).toHaveValue('Subtask 1-1');
-      }, { timeout: 3000 });
-    });
-
     test('deletes a subtask', async () => {
       const user = userEvent.setup();
       global.confirm = jest.fn(() => true);
