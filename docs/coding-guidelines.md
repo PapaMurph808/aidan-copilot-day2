@@ -50,3 +50,16 @@ Avoid code duplication:
 - **Reusable components**: Design React components to be reusable
 - **Configuration over duplication**: Use configuration objects instead of duplicating similar code
 - **Balance**: Don't over-abstract; find the right balance between DRY and clarity
+
+### Error Handling
+
+Implement robust error handling throughout the application:
+
+- **Catch and handle errors**: Use try-catch blocks for operations that may fail
+- **User-friendly messages**: Display clear, actionable error messages to users
+- **Log errors appropriately**: Console.error for debugging while avoiding sensitive information
+- **Graceful degradation**: Handle errors without breaking the entire application
+- **Validate input**: Check user input and API responses before processing
+- **Handle edge cases**: Consider and handle null, undefined, and unexpected values
+- **Error boundaries**: Use React error boundaries to catch rendering errors
+- **Async error handling**: Properly handle errors in promises and async/await code
