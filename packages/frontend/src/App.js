@@ -315,12 +315,14 @@ function App() {
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
               placeholder="Enter task title"
+              aria-label="Task title"
               required
             />
             <input
               type="date"
               value={newTaskDueDate}
               onChange={(e) => setNewTaskDueDate(e.target.value)}
+              aria-label="Task due date"
               required
             />
             <button type="submit">Add Task</button>
@@ -391,12 +393,14 @@ function App() {
                               value={newSubtaskTitle}
                               onChange={(e) => setNewSubtaskTitle(e.target.value)}
                               placeholder="Subtask title"
+                              aria-label="Subtask title"
                             />
                             <input
                               type="date"
                               value={newSubtaskDueDate}
                               onChange={(e) => setNewSubtaskDueDate(e.target.value)}
                               max={task.due_date}
+                              aria-label="Subtask due date"
                             />
                             <div className="button-group">
                               <button onClick={() => handleCreateSubtask(task.id)} className="save-btn">Add</button>
@@ -415,12 +419,14 @@ function App() {
                                       type="text"
                                       value={editSubtaskTitle}
                                       onChange={(e) => setEditSubtaskTitle(e.target.value)}
+                                      aria-label="Edit subtask title"
                                     />
                                     <input
                                       type="date"
                                       value={editSubtaskDueDate}
                                       onChange={(e) => setEditSubtaskDueDate(e.target.value)}
                                       max={task.due_date}
+                                      aria-label="Edit subtask due date"
                                     />
                                     <div className="button-group">
                                       <button onClick={() => handleSaveEditSubtask(subtask.id)} className="save-btn">Save</button>

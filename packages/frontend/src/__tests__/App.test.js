@@ -233,7 +233,8 @@ describe('App Component', () => {
       
       // Fill in the form
       const titleInput = screen.getByPlaceholderText('Enter task title');
-      const dateInput = screen.getAllByDisplayValue('')[0];
+      const dateInputs = screen.getAllByLabelText('Task due date');
+      const dateInput = dateInputs[0];
       
       await act(async () => {
         await user.type(titleInput, 'New Task');
@@ -245,16 +246,16 @@ describe('App Component', () => {
         await user.click(submitButton);
       });
       
-      // Form should be cleared
+      // Form should be cleared after submission
       await waitFor(() => {
-        expect(titleInput.value).toBe('');
+        expect(titleInput).toHaveValue('');
       });
     });
 
     test('handles task creation error', async () => {
       server.use(
-        rest.post('/api/tasks', (req, res, ctx) => {
-          return res(ctx.status(400), ctx.json({ error: 'Task title is required' }));
+        rest.post('/api/tasks', async (req, res, ctx) => {
+          return res(ctx.status(400), ctx.json({ error: 'Invalid task data' }));
         })
       );
       
@@ -268,14 +269,24 @@ describe('App Component', () => {
         expect(screen.queryByText('Loading tasks...')).not.toBeInTheDocument();
       });
       
+      // Fill in the form to bypass HTML5 validation
+      const titleInput = screen.getByPlaceholderText('Enter task title');
+      const dateInput = screen.getByLabelText('Task due date');
+      
+      await act(async () => {
+        await user.type(titleInput, 'Test Task');
+        await user.type(dateInput, '2026-03-01');
+      });
+      
       const submitButton = screen.getByText('Add Task');
       await act(async () => {
         await user.click(submitButton);
       });
       
+      // Wait for error message to appear
       await waitFor(() => {
-        expect(screen.getByText(/Error adding task/)).toBeInTheDocument();
-      });
+        expect(screen.getByText(/Error adding task/i)).toBeInTheDocument();
+      }, { timeout: 3000 });
     });
   });
 
@@ -463,8 +474,12 @@ describe('App Component', () => {
       
       // Fill in subtask form
       const titleInput = screen.getByPlaceholderText('Subtask title');
+      const dateInputs = screen.getAllByLabelText(/due date/i);
+      const subtaskDateInput = dateInputs[dateInputs.length - 1];
+      
       await act(async () => {
         await user.type(titleInput, 'New Subtask');
+        await user.type(subtaskDateInput, '2026-02-10');
       });
       
       // Click add button
@@ -490,7 +505,10 @@ describe('App Component', () => {
         expect(screen.getByText('Subtask 1-1')).toBeInTheDocument();
       });
       
-      // Click edit on subtask
+      // Click edit on subtask - find the edit button within the subtask item
+      const subtaskItems = screen.getAllByText('Subtask 1-1');
+      expect(subtaskItems.length).toBeGreaterThan(0);
+      
       const editButtons = screen.getAllByText('Edit');
       const subtaskEditButton = editButtons[editButtons.length - 1];
       
@@ -498,9 +516,12 @@ describe('App Component', () => {
         await user.click(subtaskEditButton);
       });
       
-      // Should show edit form with subtask data
-      const titleInput = screen.getAllByDisplayValue('Subtask 1-1')[0];
-      expect(titleInput).toBeInTheDocument();
+      // Should show edit form with subtask data by checking for the edit input
+      await waitFor(() => {
+        const editInput = screen.getByLabelText('Edit subtask title');
+        expect(editInput).toBeInTheDocument();
+        expect(editInput).toHaveValue('Subtask 1-1');
+      }, { timeout: 3000 });
     });
 
     test('deletes a subtask', async () => {
